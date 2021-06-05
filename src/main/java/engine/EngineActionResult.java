@@ -1,24 +1,26 @@
 package engine;
 
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 final class EngineActionResult {
 
-  final String message;
-  private UUID specifiedRecipient;
+  final List<Message> messages;
 
-  EngineActionResult(String message, UUID specifiedRecipient) {
-    this.message = message;
-    this.specifiedRecipient = specifiedRecipient;
+  EngineActionResult() {
+    this.messages = new ArrayList<>();
   }
 
-  EngineActionResult(String message) {
-    this.message = message;
+  EngineActionResult addMessageForEveryone(String message) {
+    messages.add(new Message(message));
+    return this;
   }
 
-  public Optional<UUID> getSpecifiedRecipient() {
-    return Optional.ofNullable(specifiedRecipient);
+  EngineActionResult addMessageForSpecifiedPlayer(String message, UUID specifiedRecipient) {
+    messages.add(new Message(message, specifiedRecipient));
+    return this;
   }
 
 }

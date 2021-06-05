@@ -3,11 +3,8 @@ package engine;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 public class Server {
 
@@ -16,12 +13,18 @@ public class Server {
   private final Engine engine;
   public static final int PORT = 2345;
 
-  public Server() {
+  private Server() {
     engine = new Engine();
   }
 
+  static Server create() {
+    final Server server = new Server();
+    server.engine.setServer(server);
+    return server;
+  }
+
   public static void main(String[] args) {
-    new Server().start();
+    create().start();
   }
 
   private void start() {
@@ -40,13 +43,22 @@ public class Server {
     }
   }
 
-  void handle(String message) {
-    engine.handle(message);
+  void handle(String message, UUID uuid) {
+    final EngineActionResult actionResult = engine.handle(message, uuid);
+    if (actionResult != null) {
+      actionResult.messages
+          .forEach(messageToSend ->
+              messageToSend.getSpecifiedRecipient().ifPresentOrElse(
+                  recipientUuid -> sendMessageTo(recipientUuid, messageToSend.message),
+                  () -> broadcast(messageToSend.message)
+              )
+          );
+    }
   }
 
   void broadcastWithout(String message, UUID uuid) {
     for (UserThread thread : userThreads.values()) {
-      if (thread.uuid.equals(uuid)) {
+      if (!thread.uuid.equals(uuid)) {
         thread.sendMessage(message);
       }
     }
@@ -78,7 +90,7 @@ public class Server {
   void addUserName(UUID uuid, String userName) {
     userNames.put(uuid, userName);
     final EngineActionResult result = engine.newUser(uuid, userName);
-    sendMessageTo(uuid, result.message);
+    sendMessageTo(uuid, result.messages.get(0).message);
   }
 
   String getUserNames() {

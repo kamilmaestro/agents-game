@@ -32,8 +32,7 @@ public class UserThread extends Thread {
       String clientMessage;
       do {
         clientMessage = reader.readLine();
-        serverMessage = "[" + userName + "]: " + clientMessage;
-        server.handle(serverMessage);
+        server.handle(clientMessage, uuid);
 
       } while (!clientMessage.equals("Exit"));
 

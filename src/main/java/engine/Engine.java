@@ -11,19 +11,16 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static engine.ActionType.*;
+
 final class Engine {
 
   private final GameFacade gameFacade;
-  private Server server;
   private ActionType currentAction; //TODO tu chyba idealnie spasuje state :P
 
   Engine() {
-    this.currentAction = ActionType.PLAYERS_MARKING_AS_READY;
+    this.currentAction = PLAYERS_MARKING_AS_READY;
     this.gameFacade = new GameFacade();
-  }
-
-  void setServer(Server server) {
-    this.server = server;
   }
 
   EngineActionResult newUser(UUID uuid, String name) {
@@ -36,12 +33,52 @@ final class Engine {
   }
 
   EngineActionResult handle(String message, UUID uuid) {
-    if (currentAction.equals(ActionType.PLAYERS_MARKING_AS_READY)) {
+    if (PLAYERS_MARKING_AS_READY.equals(currentAction)) {
       return markAsReady(message, uuid);
-    } else if (currentAction.equals(ActionType.LEADER_CHOOSING_TEAM)) {
+    } else if (LEADER_CHOOSING_TEAM.equals(currentAction)) {
       return selectTeam(message, uuid);
-    } else if (currentAction.equals(ActionType.ACCEPTING_TEAM)) {
+    } else if (ACCEPTING_TEAM.equals(currentAction)) {
       return acceptTeam(message, uuid);
+    } else if (VOTING_FOR_MISSION_SUCCESS.equals(currentAction)) {
+      return voteForMissionSuccess(message, uuid);
+    } else if (AGENTS_WIN.equals(currentAction)) {
+
+    } else if (SPIES_WIN.equals(currentAction)) {
+
+    }
+    return null;
+  }
+
+  private EngineActionResult voteForMissionSuccess(String message, UUID uuid) {
+    if (!message.equals("1") && !message.equals("2")) {
+      return null;
+    }
+    final VoteResult voteResult = gameFacade.voteForMissionSuccess(message.equals("1"), uuid);
+    final String info;
+    if (VoteResult.APPROVED.equals(voteResult)) {
+      currentAction = LEADER_CHOOSING_TEAM;
+      info = "Mission was successful!\n";
+      final String infoForCurrentLeader = "Press 1 if you find that mission was successful, otherwise press 2.\n";
+      final UUID leaderUuid = gameFacade.selectNewLeader();
+
+      return new EngineActionResult()
+          .addMessageForEveryone(info)
+          .addMessageForSpecifiedPlayer(infoForCurrentLeader, leaderUuid);
+    } else if (VoteResult.IN_PROGRESS.equals(voteResult)) {
+      info = "You vote was count. Wait for the others.\n";
+      return new EngineActionResult().addMessageForSpecifiedPlayer(info, uuid);
+    } else if (AGENTS_WIN.equals(currentAction)) {
+      
+    } else if (SPIES_WIN.equals(currentAction)) {
+
+    } else {
+      currentAction = LEADER_CHOOSING_TEAM;
+      info = "Mission failure :(\n";
+      final UUID leaderUuid = gameFacade.selectNewLeader();
+
+      return new EngineActionResult()
+          .addMessageForEveryone(info)
+          .addMessageForSpecifiedPlayer(getInfoForLeader(leaderUuid), leaderUuid);
     }
     return null;
   }
@@ -51,23 +88,28 @@ final class Engine {
       return null;
     }
     final VoteResult voteResult = gameFacade.acceptTeam(message.equals("1"), uuid);
-    final StringBuilder stringBuilder = new StringBuilder();
+    final String info;
     if (VoteResult.APPROVED.equals(voteResult)) {
-      stringBuilder.append("Team was accepted. Prepare for the mission.");
-      currentAction = ActionType.VOTING_FOR_MISSION_SUCCESS;
+      currentAction = VOTING_FOR_MISSION_SUCCESS;
+      info = "Team was accepted. Mission is in progress...\n";
+      final EngineActionResult actionResult = new EngineActionResult().addMessageForEveryone(info);
+      final String infoForCurrentTeam = "Press 1 if you find that mission was successful, otherwise press 2.\n";
+      gameFacade.getCurrentTeamUuids()
+          .forEach(playerUuid -> actionResult.addMessageForSpecifiedPlayer(infoForCurrentTeam, playerUuid));
+
+      return actionResult;
     } else if (VoteResult.IN_PROGRESS.equals(voteResult)) {
-      stringBuilder.append("You vote was count. Wait for the others.");
-      return new EngineActionResult().addMessageForSpecifiedPlayer(stringBuilder.toString(), uuid);
+      info = "You vote was count. Wait for the others.\n";
+      return new EngineActionResult().addMessageForSpecifiedPlayer(info, uuid);
     } else {
-      stringBuilder.append("Team was not accepted. Prepare for the next creation of the team.");
-      currentAction = ActionType.LEADER_CHOOSING_TEAM;
+      currentAction = LEADER_CHOOSING_TEAM;
+      info = "Team was not accepted. Prepare for the next creation of the team.\n";
       final UUID leaderUuid = gameFacade.selectNewLeader();
+
       return new EngineActionResult()
-          .addMessageForEveryone(stringBuilder.toString())
+          .addMessageForEveryone(info)
           .addMessageForSpecifiedPlayer(getInfoForLeader(leaderUuid), leaderUuid);
     }
-
-    return null;
   }
 
   private EngineActionResult selectTeam(String message, UUID uuid) {
@@ -80,8 +122,8 @@ final class Engine {
     final StringBuilder stringBuilder = new StringBuilder("Selected team:");
     gameFacade.selectTeam(chosenPlayersUuids, uuid)
         .forEach(player -> stringBuilder.append(" ").append(player.getName()));
-    stringBuilder.append(". Press 1 if you agree, otherwise press 2");
-    currentAction = ActionType.ACCEPTING_TEAM;
+    stringBuilder.append(". Press 1 if you agree, otherwise press 2.");
+    currentAction = ACCEPTING_TEAM;
 
     return new EngineActionResult().addMessageForEveryone(stringBuilder.toString());
   }
@@ -92,13 +134,13 @@ final class Engine {
     }
     final Game game = gameFacade.markAsReady(uuid);
     if (game.hasStarted()) {
-      currentAction = ActionType.LEADER_CHOOSING_TEAM;
+      currentAction = LEADER_CHOOSING_TEAM;
       final UUID leaderUuid = gameFacade.selectNewLeader();
       return new EngineActionResult()
-          .addMessageForEveryone("Game started. Have fun :D")
+          .addMessageForEveryone("Game started. Have fun :D\n")
           .addMessageForSpecifiedPlayer(getInfoForLeader(leaderUuid), leaderUuid);
     } else {
-      return new EngineActionResult().addMessageForSpecifiedPlayer("You are ready! Wait for the others.", uuid);
+      return new EngineActionResult().addMessageForSpecifiedPlayer("You are ready! Wait for the others.\n", uuid);
     }
   }
 

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class GameFacade {
   //starategy mam dla strategii w grze, metoda wytworcza mam dla Voting i VoteOperator
@@ -12,10 +13,12 @@ public class GameFacade {
   private final PlayerRepository playerRepository;
   //TODO chyba memento bylby dla obecnych glosow, bo moglbys je cofac itp, a state dla game?
   private final List<Vote> votes = new ArrayList<>();
+  private final MissionsState missionsState;
 
   public GameFacade() {
     this.game = Game.createNew();
     this.playerRepository = new InMemoryPlayerRepository();
+    this.missionsState = new MissionsState();
   }
 
   public Game markAsReady(UUID uuid) {
@@ -32,6 +35,12 @@ public class GameFacade {
     return game.getPlayers();
   }
 
+  public List<UUID> getCurrentTeamUuids() {
+    return game.getCurrentTeam().stream()
+        .map(Player::getUuid)
+        .collect(Collectors.toList());
+  }
+
   public int getTeamSize() {
     return strategy.getTeamSize();
   }
@@ -45,8 +54,9 @@ public class GameFacade {
     return vote(accepts, VoteOperator.VoteMode.ACCEPTING_TEAM, uuid);
   }
 
-  VoteResult voteForMissionSuccess(boolean success, UUID uuid) {
-    return vote(success, VoteOperator.VoteMode.MISSION, uuid);
+  public VoteResult voteForMissionSuccess(boolean success, UUID uuid) {
+    final VoteResult voteResult = vote(success, VoteOperator.VoteMode.MISSION, uuid);
+    return missionsState.updateMission(voteResult);
   }
 
   private VoteResult vote(boolean success, VoteOperator.VoteMode voteMode, UUID uuid) {

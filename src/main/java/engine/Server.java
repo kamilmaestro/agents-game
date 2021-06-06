@@ -13,18 +13,12 @@ public class Server {
   private final Engine engine;
   public static final int PORT = 2345;
 
-  private Server() {
+  Server() {
     engine = new Engine();
   }
 
-  static Server create() {
-    final Server server = new Server();
-    server.engine.setServer(server);
-    return server;
-  }
-
   public static void main(String[] args) {
-    create().start();
+    new Server();
   }
 
   private void start() {

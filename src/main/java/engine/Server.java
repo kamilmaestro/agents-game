@@ -1,5 +1,8 @@
 package engine;
 
+import engine.events.PlayersManager;
+import game.GameFacade;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -12,11 +15,14 @@ public class Server {
 
   private final HashMap<UUID, String> userNames = new HashMap<>();
   private final Engine engine;
+  private final PlayersManager playersManager;
   private static final HashMap<UUID, UserThread> userThreads = new HashMap<>();
   static final int PORT = 2345;
 
   Server() {
-    engine = new Engine();
+    GameFacade gameFacade = new GameFacade();
+    this.engine = new Engine(gameFacade);
+    this.playersManager = new PlayersManager(gameFacade);
   }
 
   public static void main(String[] args) {
@@ -74,9 +80,10 @@ public class Server {
   }
 
   void removeUser(UUID uuid) {
+    final String userName = userNames.get(uuid);
     userThreads.remove(uuid);
     userNames.remove(uuid);
-    engine.userLeft(uuid);
+    playersManager.removeUser(uuid, userName);
   }
 
   boolean hasUsers() {
@@ -85,15 +92,14 @@ public class Server {
 
   void addUserName(UUID uuid, String userName) {
     userNames.put(uuid, userName);
-    final EngineActionResult result = engine.newUser(uuid, userName);
-    sendMessageTo(uuid, result.messages.get(0).message);
+    playersManager.addUser(uuid, userName);
   }
 
   String getUserNames() {
     return String.join(", ", userNames.values());
   }
 
-  static List<UserThread> getUserThreads() {
+  public static List<UserThread> getUserThreads() {
     return new ArrayList<>(userThreads.values());
   }
 

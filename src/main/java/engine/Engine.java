@@ -1,5 +1,6 @@
 package engine;
 
+import engine.events.UserEventsManager;
 import game.Game;
 import game.GameFacade;
 import game.Player;
@@ -19,20 +20,20 @@ final class Engine {
   private final ActionsHandler actionsHandler;
   private ActionType currentAction;
 
-  Engine() {
+  Engine(GameFacade gameFacade) {
     this.currentAction = PLAYERS_MARKING_AS_READY;
-    this.gameFacade = new GameFacade();
+    this.gameFacade = gameFacade;
     this.actionsHandler = new ActionsHandler(gameFacade);
   }
 
-  EngineActionResult newUser(UUID uuid, String name) {
-    gameFacade.onUserCreated(uuid, name);
-    return new EngineActionResult().addMessageForSpecifiedPlayer("Press 1 if you are ready", uuid);
-  }
-
-  void userLeft(UUID uuid) {
-
-  }
+//  void addUser(UUID uuid, String name) {
+//    gameFacade.onUserCreated(uuid, name);
+//    userEventsManager.inform("created", uuid, name);
+//  }
+//
+//  void removeUser(UUID uuid, String name) {
+//    userEventsManager.inform("removed", uuid, name);
+//  }
 
   EngineActionResult handle2(String message, UUID uuid) {
     if (message.equals("t") || message.equals("f")) {

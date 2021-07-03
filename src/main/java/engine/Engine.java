@@ -16,11 +16,13 @@ import static engine.ActionType.*;
 final class Engine {
 
   private final GameFacade gameFacade;
-  private ActionType currentAction; //TODO tu chyba idealnie spasuje state :P
+  private final ActionsHandler actionsHandler;
+  private ActionType currentAction;
 
   Engine() {
     this.currentAction = PLAYERS_MARKING_AS_READY;
     this.gameFacade = new GameFacade();
+    this.actionsHandler = new ActionsHandler(gameFacade);
   }
 
   EngineActionResult newUser(UUID uuid, String name) {
@@ -30,6 +32,15 @@ final class Engine {
 
   void userLeft(UUID uuid) {
 
+  }
+
+  EngineActionResult handle2(String message, UUID uuid) {
+    if (message.equals("t") || message.equals("f")) {
+      return actionsHandler.vote(message, uuid);
+    } else if (message.matches("[0-9]+")) {
+      return actionsHandler.choose(message, uuid);
+    }
+    return null;
   }
 
   EngineActionResult handle(String message, UUID uuid) {
@@ -50,10 +61,10 @@ final class Engine {
   }
 
   private EngineActionResult voteForMissionSuccess(String message, UUID uuid) {
-    if (!message.equals("1") && !message.equals("2")) {
+    if (!message.equals("t") && !message.equals("f")) {
       return null;
     }
-    final VoteResult voteResult = gameFacade.voteForMissionSuccess(message.equals("1"), uuid);
+    final VoteResult voteResult = gameFacade.voteForMissionSuccess(message.equals("t"), uuid);
     final String info;
     if (VoteResult.APPROVED.equals(voteResult)) {
       currentAction = LEADER_CHOOSING_TEAM;
@@ -67,9 +78,9 @@ final class Engine {
     } else if (VoteResult.IN_PROGRESS.equals(voteResult)) {
       info = "You vote was count. Wait for the others.\n";
       return new EngineActionResult().addMessageForSpecifiedPlayer(info, uuid);
-    } else if (AGENTS_WIN.equals(currentAction)) {
+    } else if (VoteResult.AGENTS_WIN.equals(voteResult)) {
       
-    } else if (SPIES_WIN.equals(currentAction)) {
+    } else if (VoteResult.SPIES_WIN.equals(voteResult)) {
 
     } else {
       currentAction = LEADER_CHOOSING_TEAM;
@@ -84,10 +95,10 @@ final class Engine {
   }
 
   private EngineActionResult acceptTeam(String message, UUID uuid) {
-    if (!message.equals("1") && !message.equals("2")) {
+    if (!message.equals("t") && !message.equals("f")) {
       return null;
     }
-    final VoteResult voteResult = gameFacade.acceptTeam(message.equals("1"), uuid);
+    final VoteResult voteResult = gameFacade.acceptTeam(message.equals("t"), uuid);
     final String info;
     if (VoteResult.APPROVED.equals(voteResult)) {
       currentAction = VOTING_FOR_MISSION_SUCCESS;
@@ -129,7 +140,7 @@ final class Engine {
   }
 
   private EngineActionResult markAsReady(String message, UUID uuid) {
-    if (!message.equals("1")) {
+    if (!message.equals("t")) {
       return null;
     }
     final Game game = gameFacade.markAsReady(uuid);

@@ -33,8 +33,11 @@ abstract class VoteOperator {
   }
 
   private VoteResult cancelVoting() {
-    final long approvalVotes = votes.stream().filter(Vote::isApproval).count();
-    return approvalVotes > votes.size() ?
+    final long approvalVotes = votes.stream()
+        .filter(Vote::isApproval)
+        .count();
+
+    return approvalVotes > (votes.size() / 2) ?
         VoteResult.APPROVED
         : VoteResult.REJECTED;
   }

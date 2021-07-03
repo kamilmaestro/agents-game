@@ -61,8 +61,8 @@ public class GameFacade {
 
   private VoteResult vote(boolean success, VoteOperator.VoteMode voteMode, UUID uuid) {
     final VoteOperator voteOperator = VoteOperator.VoteMode.ACCEPTING_TEAM.equals(voteMode) ?
-        new MissionVoteOperator(game.getCurrentTeam(), votes)
-        : new AcceptingTeamVoteOperator(game.getPlayers(), votes);
+        new AcceptingTeamVoteOperator(game.getPlayers(), votes)
+        : new MissionVoteOperator(game.getCurrentTeam(), votes);
     final VoteResult voteResult = voteOperator.vote(success, uuid);
     if (voteResult.isCompleted()) {
       votes.clear();

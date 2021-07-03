@@ -20,7 +20,7 @@ public class Server {
   }
 
   public static void main(String[] args) {
-    new Server();
+    new Server().start();
   }
 
   private void start() {
@@ -40,7 +40,7 @@ public class Server {
   }
 
   void handle(String message, UUID uuid) {
-    final EngineActionResult actionResult = engine.handle(message, uuid);
+    final EngineActionResult actionResult = engine.handle2(message, uuid);
     if (actionResult != null) {
       actionResult.messages
           .forEach(messageToSend ->

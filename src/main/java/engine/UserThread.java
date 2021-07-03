@@ -54,7 +54,7 @@ public class UserThread extends Thread {
     }
   }
 
-  void sendMessage(String message) {
+  public void sendMessage(String message) {
     writer.println(message);
   }
 }

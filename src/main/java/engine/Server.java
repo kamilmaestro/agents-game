@@ -3,15 +3,17 @@ package engine;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 public class Server {
 
-  private final HashMap<UUID, UserThread> userThreads = new HashMap<>();
   private final HashMap<UUID, String> userNames = new HashMap<>();
   private final Engine engine;
-  public static final int PORT = 2345;
+  private static final HashMap<UUID, UserThread> userThreads = new HashMap<>();
+  static final int PORT = 2345;
 
   Server() {
     engine = new Engine();
@@ -89,6 +91,10 @@ public class Server {
 
   String getUserNames() {
     return String.join(", ", userNames.values());
+  }
+
+  static List<UserThread> getUserThreads() {
+    return new ArrayList<>(userThreads.values());
   }
 
 }

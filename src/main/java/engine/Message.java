@@ -3,17 +3,17 @@ package engine;
 import java.util.Optional;
 import java.util.UUID;
 
-final class Message {
+public final class Message {
 
-  final String message;
+  public final String message;
   private UUID specifiedRecipient;
 
-  Message(String message, UUID specifiedRecipient) {
+  public Message(String message, UUID specifiedRecipient) {
     this.message = message;
     this.specifiedRecipient = specifiedRecipient;
   }
 
-  Message(String message) {
+  public Message(String message) {
     this.message = message;
   }
 

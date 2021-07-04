@@ -13,13 +13,13 @@ public class UserEventsManager {
   }
 
   public void subscribe(String eventType, UserEventsListener listener) {
-    List<UserEventsListener> users = listeners.get(eventType);
-    users.add(listener);
+    List<UserEventsListener> listeners = this.listeners.get(eventType);
+    listeners.add(listener);
   }
 
   public void unsubscribe(String eventType, UserEventsListener listener) {
-    List<UserEventsListener> users = listeners.get(eventType);
-    users.remove(listener);
+    List<UserEventsListener> listeners = this.listeners.get(eventType);
+    listeners.remove(listener);
   }
 
   public void inform(String eventType, UUID uuid, String name) {

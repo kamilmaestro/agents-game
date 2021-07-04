@@ -1,6 +1,8 @@
 package engine;
 
 import engine.events.PlayersManager;
+import engine.events.UserJoinedListener;
+import engine.events.UserLeftListener;
 import game.GameFacade;
 
 import java.io.IOException;
@@ -23,6 +25,8 @@ public class Server {
     GameFacade gameFacade = new GameFacade();
     this.engine = new Engine(gameFacade);
     this.playersManager = new PlayersManager(gameFacade);
+    this.playersManager.getEventsManager().subscribe("created", new UserJoinedListener());
+    this.playersManager.getEventsManager().subscribe("removed", new UserLeftListener());
   }
 
   public static void main(String[] args) {
@@ -42,6 +46,8 @@ public class Server {
     } catch (IOException ex) {
       System.out.println("Error in the server: " + ex.getMessage());
       ex.printStackTrace();
+      this.playersManager.getEventsManager().unsubscribe("created", new UserJoinedListener());
+      this.playersManager.getEventsManager().unsubscribe("removed", new UserLeftListener());
     }
   }
 

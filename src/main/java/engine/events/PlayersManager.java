@@ -23,4 +23,8 @@ public class PlayersManager {
     userEventsManager.inform("removed", uuid, name);
   }
 
+  public UserEventsManager getEventsManager() {
+    return userEventsManager;
+  }
+
 }

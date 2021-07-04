@@ -1,10 +1,9 @@
 package engine;
 
-import engine.events.UserEventsManager;
 import game.Game;
 import game.GameFacade;
 import game.Player;
-import game.VoteResult;
+import game.voting.VoteResult;
 
 import java.util.List;
 import java.util.Set;

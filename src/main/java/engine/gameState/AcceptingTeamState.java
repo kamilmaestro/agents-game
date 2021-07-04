@@ -3,7 +3,7 @@ package engine.gameState;
 import engine.ActionsHandler;
 import engine.EngineActionResult;
 import game.Player;
-import game.VoteResult;
+import game.voting.VoteResult;
 
 import java.util.List;
 import java.util.UUID;

@@ -1,4 +1,4 @@
-package game;
+package game.voting;
 
 public enum VoteResult {
   AGENTS_WIN,
@@ -7,7 +7,7 @@ public enum VoteResult {
   REJECTED,
   SPIES_WIN;
 
-  boolean isCompleted() {
+  public boolean isCompleted() {
     return equals(APPROVED) || equals(REJECTED);
   }
 

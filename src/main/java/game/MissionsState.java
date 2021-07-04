@@ -1,9 +1,11 @@
 package game;
 
+import game.voting.VoteResult;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import static game.VoteResult.APPROVED;
+import static game.voting.VoteResult.APPROVED;
 
 final class MissionsState {
 

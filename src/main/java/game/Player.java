@@ -33,7 +33,7 @@ public class Player {
     return isReady;
   }
 
-  boolean isAgent() {
+  public boolean isAgent() {
     return character.equals(Character.AGENT);
   }
 

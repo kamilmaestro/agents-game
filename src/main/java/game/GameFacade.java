@@ -1,6 +1,7 @@
 package game;
 
 import game.gameStrategy.*;
+import game.voting.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,11 +10,10 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class GameFacade {
-  //starategy mam dla strategii w grze, metoda wytworcza mam dla Voting i VoteOperator
+
   private final Game game;
   private GameStrategy strategy;
   private final PlayerRepository playerRepository;
-  //TODO chyba memento bylby dla obecnych glosow, bo moglbys je cofac itp, a state dla game?
   private final List<Vote> votes = new ArrayList<>();
   private final MissionsState missionsState;
 

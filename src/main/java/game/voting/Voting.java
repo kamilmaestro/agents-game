@@ -1,4 +1,7 @@
-package game;
+package game.voting;
+
+import game.Player;
+import game.voting.Vote;
 
 import java.util.List;
 import java.util.Optional;

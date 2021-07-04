@@ -1,18 +1,18 @@
-package game;
+package game.voting;
 
 import java.util.UUID;
 
-final class Vote {
+public class Vote {
 
   private final boolean value;
   private final UUID playerUuid;
 
-  Vote(boolean value, UUID playerUuid) {
+  public Vote(boolean value, UUID playerUuid) {
     this.value = value;
     this.playerUuid = playerUuid;
   }
 
-  boolean isApproval() {
+  public boolean isApproval() {
     return value;
   }
 

@@ -1,4 +1,6 @@
-package game;
+package game.gameStrategy;
+
+import game.Player;
 
 import java.util.ArrayList;
 import java.util.Collection;

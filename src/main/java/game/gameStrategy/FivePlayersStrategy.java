@@ -1,21 +1,19 @@
-package game;
+package game.gameStrategy;
 
-import lombok.AccessLevel;
-import lombok.experimental.FieldDefaults;
+import game.Player;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-final class NinePlayersStrategy implements GameStrategy {
+public class FivePlayersStrategy implements GameStrategy {
 
-  private static final int TEAM_SIZE = 5;
+  private static final int TEAM_SIZE = 3;
 
   @Override
   public List<Player> drawSides(Collection<Player> players) {
-    return new SidesGenerator(players).drawSidesForNumberOfSpies(4);
+    return new SidesGenerator(players).drawSidesForNumberOfSpies(2);
   }
 
   @Override

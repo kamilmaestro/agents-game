@@ -1,11 +1,13 @@
-package game;
+package game.gameStrategy;
+
+import game.Player;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-interface GameStrategy {
+public interface GameStrategy {
 
   List<Player> drawSides(Collection<Player> players);
 

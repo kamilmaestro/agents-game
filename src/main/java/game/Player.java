@@ -4,7 +4,7 @@ import java.util.UUID;
 
 public class Player {
 
-  enum Character {
+  public enum Character {
     AGENT,
     SPY
   }
@@ -20,7 +20,7 @@ public class Player {
     this.character = Character.AGENT;
   }
 
-  Player assignRole(Character character) {
+  public Player assignRole(Character character) {
     this.character = character;
     return this;
   }

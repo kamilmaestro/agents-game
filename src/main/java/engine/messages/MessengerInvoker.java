@@ -1,5 +1,8 @@
 package engine.messages;
 
+import engine.UserThread;
+
+import java.util.List;
 import java.util.UUID;
 
 public class MessengerInvoker {

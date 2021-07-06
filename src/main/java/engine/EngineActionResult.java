@@ -18,7 +18,7 @@ public final class EngineActionResult {
   }
 
   public EngineActionResult addMessageForSpecifiedPlayer(String message, UUID specifiedRecipient) {
-    messages.add(new Message(message, specifiedRecipient));
+    messages.add(new Message(message, specifiedRecipient, false));
     return this;
   }
 

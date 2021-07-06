@@ -7,10 +7,12 @@ public final class Message {
 
   public final String message;
   private UUID specifiedRecipient;
+  private boolean isExcluded = false;
 
-  public Message(String message, UUID specifiedRecipient) {
+  public Message(String message, UUID specifiedRecipient, boolean isExcluded) {
     this.message = message;
     this.specifiedRecipient = specifiedRecipient;
+    this.isExcluded = isExcluded;
   }
 
   public Message(String message) {

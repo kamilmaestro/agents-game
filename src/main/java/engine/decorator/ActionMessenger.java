@@ -23,7 +23,7 @@ public final class ActionMessenger implements Messenger {
   }
 
   public ActionMessenger addMessageForSpecifiedPlayer(String message, UUID specifiedRecipient) {
-    messages.add(new Message(message, specifiedRecipient));
+    messages.add(new Message(message, specifiedRecipient, false));
     return this;
   }
 

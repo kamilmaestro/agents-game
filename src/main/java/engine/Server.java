@@ -52,16 +52,17 @@ public class Server {
   }
 
   void handle(String message, UUID uuid) {
-    final EngineActionResult actionResult = engine.handle2(message, uuid);
-    if (actionResult != null) {
-      actionResult.messages
-          .forEach(messageToSend ->
-              messageToSend.getSpecifiedRecipient().ifPresentOrElse(
-                  recipientUuid -> sendMessageTo(recipientUuid, messageToSend.message),
-                  () -> broadcast(messageToSend.message)
-              )
-          );
-    }
+    engine.handle2(message, uuid);
+//    final EngineActionResult actionResult = engine.handle2(message, uuid);
+//    if (actionResult != null) {
+//      actionResult.messages
+//          .forEach(messageToSend ->
+//              messageToSend.getSpecifiedRecipient().ifPresentOrElse(
+//                  recipientUuid -> sendMessageTo(recipientUuid, messageToSend.message),
+//                  () -> broadcast(messageToSend.message)
+//              )
+//          );
+//    }
   }
 
   void broadcastWithout(String message, UUID uuid) {

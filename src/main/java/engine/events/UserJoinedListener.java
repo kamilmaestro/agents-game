@@ -11,7 +11,7 @@ public class UserJoinedListener implements UserEventsListener {
     getUserThreads().stream()
         .filter(userThread -> userThread.uuid.equals(uuid))
         .findAny()
-        .ifPresent(userThread -> userThread.sendMessage("Press 1 if you are ready"));
+        .ifPresent(userThread -> userThread.sendMessage("Press t if you are ready"));
   }
 
 }
